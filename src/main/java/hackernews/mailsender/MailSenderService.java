@@ -12,17 +12,11 @@ public class MailSenderService {
   public static Logger LOG = LoggerFactory.getLogger(MailSenderService.class);
 
   public static void main(String[] args) {
-    if (args.length > 0) {
-      System.out.println(args[0]);
-    } else {
-      LOG.info("No args given, using default config.");
 
-      ServiceConfiguration.resolveFor(MailSenderConfiguration.class);
+    ServiceConfiguration.resolveFor(MailSenderConfiguration.class);
 
-      MailSender mailSender = new MailSender();
-      mailSender.run();
-    }
-
+    MailSender mailSender = new MailSender();
+    mailSender.run();
   }
 
 }

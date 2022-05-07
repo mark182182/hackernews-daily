@@ -32,10 +32,11 @@ public class MailHandler {
 
   public void send(final MimeMessage message) {
     try (Transport transport = this.session.getTransport("smtp")) {
-      transport.connect("smtp.gmail.com", MailSenderConfiguration.SMTP_USER.get(),
+      transport.connect(MailSenderConfiguration.SMTP_HOST.get(), MailSenderConfiguration.SMTP_USER.get(),
           MailSenderConfiguration.SMTP_PASSWORD.get());
       transport.sendMessage(message, message.getAllRecipients());
       transport.close();
+      LOG.info("Email has been sent");
     } catch (MessagingException e) {
       LOG.error("Error while sending mail: {}", e.getMessage(), e);
     }

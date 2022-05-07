@@ -11,7 +11,8 @@ public class EmailComposer {
 
   private final Session session;
 
-  private String receiver;
+  private String from;
+  private String receivers;
   private String subject;
   private String body;
 
@@ -19,8 +20,13 @@ public class EmailComposer {
     this.session = session;
   }
 
-  public EmailComposer setReceiver(final String receiver) {
-    this.receiver = receiver;
+  public EmailComposer setFrom(String from) {
+    this.from = from;
+    return this;
+  }
+
+  public EmailComposer setReceivers(String receivers) {
+    this.receivers = receivers;
     return this;
   }
 
@@ -36,9 +42,13 @@ public class EmailComposer {
 
   public MimeMessage compose() throws AddressException, MessagingException {
     MimeMessage message = new MimeMessage(this.session);
-    message.addRecipient(Message.RecipientType.TO, new InternetAddress(this.receiver));
+    message.setFrom(new InternetAddress(this.from));
+    for (String receiver : this.receivers.split(";")) {
+      message.addRecipient(Message.RecipientType.TO, new InternetAddress(receiver));
+    }
     message.setSubject(this.subject);
     message.setContent(this.body, "text/html");
+    message.saveChanges();
     return message;
   }
 
