@@ -84,6 +84,7 @@ public class RequestHandler {
     for (String path : paths) {
       HttpRequest request = builder.setUri(Constants.HN_BASE_URI.concat(path)).build();
       CompletableFuture<HttpResponse<String>> future = sendAsync(request);
+      LOG.info("GET: {}", request.uri());
       executor.execute(() -> {
         try {
           HttpResponse<String> response = future.get();

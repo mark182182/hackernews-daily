@@ -38,6 +38,8 @@ public class MailSender implements Runnable {
     try {
       String newStories = this.requestHandler.send("newstories.json");
       JSONArray ids = new JSONArray(newStories);
+      
+      LOG.info("Got {} ids", ids.length());
 
       Set<String> paths = new HashSet<>();
 
