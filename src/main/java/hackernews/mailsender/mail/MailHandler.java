@@ -2,7 +2,9 @@ package hackernews.mailsender.mail;
 
 import java.util.Properties;
 
+import javax.mail.Authenticator;
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
@@ -23,19 +25,26 @@ public class MailHandler {
   }
 
   public void setup() {
-    Properties props = System.getProperties();
-    props.setProperty("mail.smtp.port", MailSenderConfiguration.SMTP_HOST.get());
-    props.setProperty("mail.smtp.auth", "true");
-    props.setProperty("mail.smtp.starttls.enable", "true");
-    this.session = Session.getInstance(props, null);
+    Properties props = new Properties();
+    props.put("mail.smtp.host", MailSenderConfiguration.SMTP_HOST.get());
+    props.put("mail.smtp.port", MailSenderConfiguration.SMTP_PORT.get());
+    props.put("mail.smtp.auth", "true");
+    props.put("mail.smtp.starttls.enable", "true");
+    props.put("mail.smtp.connectiontimeout", MailSenderConfiguration.SMTP_CONNECTION_TIMEOUT.get());
+    props.put("mail.smtp.timeout", MailSenderConfiguration.SMTP_IO_TIMEOUT.get());
+
+    this.session = Session.getInstance(props, new Authenticator() {
+      @Override
+      protected PasswordAuthentication getPasswordAuthentication() {
+        return new PasswordAuthentication(MailSenderConfiguration.SMTP_USER.get(),
+            MailSenderConfiguration.SMTP_PASSWORD.get());
+      }
+    });
   }
 
   public void send(final MimeMessage message) {
-    try (Transport transport = this.session.getTransport("smtp")) {
-      transport.connect(MailSenderConfiguration.SMTP_HOST.get(), MailSenderConfiguration.SMTP_USER.get(),
-          MailSenderConfiguration.SMTP_PASSWORD.get());
-      transport.sendMessage(message, message.getAllRecipients());
-      transport.close();
+    try {
+      Transport.send(message, message.getAllRecipients());
       LOG.info("Email has been sent");
     } catch (MessagingException e) {
       LOG.error("Error while sending mail: {}", e.getMessage(), e);
