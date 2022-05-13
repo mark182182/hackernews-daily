@@ -38,14 +38,17 @@
 					</execution>
 				</executions>
 			</plugin>
-      <plugin>
-        <groupId>com.heroku.sdk</groupId>
-        <artifactId>heroku-maven-plugin</artifactId>
-        <version>3.0.3</version>
-        <configuration>
-		  <appName>hackernews-mailsender</appName>
-		</configuration>
-      </plugin>
+			<plugin>
+				<groupId>com.heroku.sdk</groupId>
+				<artifactId>heroku-maven-plugin</artifactId>
+				<version>3.0.3</version>
+				<configuration>
+					<appName>hackernews-mailsender</appName>
+					<processTypes>
+						<web>java $JAVA_OPTS -cp target/classes:target/dependency/* -jar mailsender-0.0.1-SNAPSHOT.jar</web>
+					</processTypes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
