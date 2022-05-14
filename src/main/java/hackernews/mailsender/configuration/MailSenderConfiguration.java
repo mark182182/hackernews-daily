@@ -6,7 +6,7 @@ public final class MailSenderConfiguration implements EnvVarConfiguration {
 
   // Service
   public static Optional<String> POST_LENGTH = Optional.empty();
-  public static String REQUEST_HANDLER_THREADS = "10";
+  public static Optional<String> REQUEST_HANDLER_THREADS = Optional.empty();
   @NotLoggable
   public static Optional<String> MAIL_RECEIVERS = Optional.empty();
 

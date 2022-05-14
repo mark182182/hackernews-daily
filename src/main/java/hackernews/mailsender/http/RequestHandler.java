@@ -7,7 +7,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -76,7 +75,7 @@ public class RequestHandler {
    */
   public Set<HttpResponse<String>> sendAsync(final Set<String> paths) throws URISyntaxException {
     final ExecutorService executor = Executors
-        .newFixedThreadPool(Integer.valueOf(MailSenderConfiguration.REQUEST_HANDLER_THREADS).intValue());
+        .newFixedThreadPool(Integer.valueOf(MailSenderConfiguration.REQUEST_HANDLER_THREADS.get()).intValue());
 
     RequestBuilder builder = new RequestBuilder();
     Set<HttpResponse<String>> responses = new HashSet<>();
@@ -84,9 +83,9 @@ public class RequestHandler {
     for (String path : paths) {
       HttpRequest request = builder.setUri(Constants.HN_BASE_URI.concat(path)).build();
       CompletableFuture<HttpResponse<String>> future = sendAsync(request);
-      LOG.info("GET: {}", request.uri());
       executor.execute(() -> {
         try {
+          LOG.info("GET: {}", request.uri());
           HttpResponse<String> response = future.get();
           responses.add(response);
         } catch (InterruptedException | ExecutionException e) {
